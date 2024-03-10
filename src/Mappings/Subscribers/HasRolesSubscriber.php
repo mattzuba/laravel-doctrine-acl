@@ -10,30 +10,17 @@ use LaravelDoctrine\ACL\Mappings\HasRoles;
 
 class HasRolesSubscriber extends MappedEventSubscriber
 {
-    /**
-     * @param $metadata
-     *
-     * @return bool
-     */
-    protected function shouldBeMapped(ClassMetadata $metadata)
+    protected function shouldBeMapped(ClassMetadata $metadata): bool
     {
         return $this->getInstance($metadata) instanceof HasRolesContract;
     }
 
-    /**
-     * @return string
-     */
-    public function getAnnotationClass()
+    public function getAnnotationClass(): string
     {
         return HasRoles::class;
     }
 
-    /**
-     * @param ConfigAnnotation $annotation
-     *
-     * @return string
-     */
-    protected function getBuilder(ConfigAnnotation $annotation)
+    protected function getBuilder(ConfigAnnotation $annotation): string
     {
         return ManyToManyBuilder::class;
     }

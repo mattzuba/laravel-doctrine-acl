@@ -11,29 +11,19 @@ use LaravelDoctrine\ACL\Mappings\ConfigAnnotation;
 class BelongsToOrganisationsSubscriber extends MappedEventSubscriber
 {
     /**
-     * @param $metadata
-     *
-     * @return bool
+     * @throws \ReflectionException
      */
-    protected function shouldBeMapped(ClassMetadata $metadata)
+    protected function shouldBeMapped(ClassMetadata $metadata): bool
     {
         return $this->getInstance($metadata) instanceof BelongsToOrganisationsContract;
     }
 
-    /**
-     * @return string
-     */
-    public function getAnnotationClass()
+    public function getAnnotationClass(): string
     {
         return BelongsToOrganisations::class;
     }
 
-    /**
-     * @param ConfigAnnotation $annotation
-     *
-     * @return string
-     */
-    protected function getBuilder(ConfigAnnotation $annotation)
+    protected function getBuilder(ConfigAnnotation $annotation): string
     {
         return ManyToManyBuilder::class;
     }

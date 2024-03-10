@@ -1,9 +1,9 @@
 <?php
 
+use LaravelDoctrine\ACL\Concerns\HasPermissions;
+use LaravelDoctrine\ACL\Concerns\HasRoles;
 use LaravelDoctrine\ACL\Contracts\HasRoles as HasRolesContract;
 use LaravelDoctrine\ACL\Contracts\Role;
-use LaravelDoctrine\ACL\Permissions\HasPermissions;
-use LaravelDoctrine\ACL\Roles\HasRoles;
 
 class HasRolesTest extends PHPUnit\Framework\TestCase
 {
@@ -156,7 +156,7 @@ class UserMock2 implements HasRolesContract
 
     protected $roles = [];
 
-    public function getRoles()
+    public function getRoles(): iterable
     {
         return $this->roles;
     }
@@ -191,7 +191,7 @@ class RoleMock2 implements Role
         $this->name = $name;
     }
 
-    public function getPermissions()
+    public function getPermissions(): iterable
     {
         return $this->permissions;
     }
@@ -204,7 +204,7 @@ class RoleMock2 implements Role
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

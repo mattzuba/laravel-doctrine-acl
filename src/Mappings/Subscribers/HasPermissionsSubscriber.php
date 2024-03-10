@@ -11,30 +11,17 @@ use LaravelDoctrine\ACL\Mappings\HasPermissions;
 
 class HasPermissionsSubscriber extends MappedEventSubscriber
 {
-    /**
-     * @param $metadata
-     *
-     * @return bool
-     */
-    protected function shouldBeMapped(ClassMetadata $metadata)
+    protected function shouldBeMapped(ClassMetadata $metadata): bool
     {
         return $this->getInstance($metadata) instanceof HasPermissionsContract;
     }
 
-    /**
-     * @return string
-     */
-    public function getAnnotationClass()
+    public function getAnnotationClass(): string
     {
         return HasPermissions::class;
     }
 
-    /**
-     * @param ConfigAnnotation $annotation
-     *
-     * @return string
-     */
-    protected function getBuilder(ConfigAnnotation $annotation)
+    protected function getBuilder(ConfigAnnotation $annotation): string
     {
         // If there's a target entity, create pivot table
         if ($annotation->getTargetEntity($this->config)) {

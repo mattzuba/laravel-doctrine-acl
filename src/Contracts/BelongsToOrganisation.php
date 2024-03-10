@@ -4,8 +4,5 @@ namespace LaravelDoctrine\ACL\Contracts;
 
 interface BelongsToOrganisation
 {
-    /**
-     * @return Organisation
-     */
-    public function getOrganisation();
+    public function getOrganisation(): ?Organisation;
 }

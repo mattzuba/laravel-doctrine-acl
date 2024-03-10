@@ -3,11 +3,12 @@
 namespace LaravelDoctrine\ACL\Contracts;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 interface BelongsToOrganisations
 {
     /**
-     * @return ArrayCollection|Organisation[]
+     * @return iterable<Organisation>
      */
-    public function getOrganisations();
+    public function getOrganisations(): iterable;
 }

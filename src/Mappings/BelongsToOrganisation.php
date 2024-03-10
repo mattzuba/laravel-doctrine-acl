@@ -2,26 +2,39 @@
 
 namespace LaravelDoctrine\ACL\Mappings;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use Illuminate\Contracts\Config\Repository;
 
 /**
  * @Annotation
  * @Target("PROPERTY")
  */
-final class BelongsToOrganisation extends RelationAnnotation
+#[Attribute(Attribute::TARGET_PROPERTY)]
+final class BelongsToOrganisation implements MappingAttribute, ConfigAnnotation
 {
     /**
-     * @var string
+     * @param class-string|null $targetEntity
+     * @param string[]|null     $cascade
+     * @psalm-param 'LAZY'|'EAGER'|'EXTRA_LAZY' $fetch
      */
-    public $mappedBy = 'users';
+    public function __construct(
+        public ?string $targetEntity = null,
+        public ?string $mappedBy = 'users',
+        public ?string $inversedBy = null,
+        public ?array $cascade = null,
+        public string $fetch = 'LAZY',
+        public bool $orphanRemoval = false,
+        public ?string $indexBy = null
+    ) {}
 
     /**
      * @param Repository $config
      *
-     * @return mixed
+     * @return string|null
      */
-    public function getTargetEntity(Repository $config)
+    public function getTargetEntity(Repository $config): ?string
     {
         return $this->targetEntity ?: $config->get('acl.organisations.entity', 'Organisation');
     }

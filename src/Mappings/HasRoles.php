@@ -2,26 +2,36 @@
 
 namespace LaravelDoctrine\ACL\Mappings;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use Illuminate\Contracts\Config\Repository;
 
 /**
  * @Annotation
  * @Target("PROPERTY")
+ * @NamedArgumentConstructor
  */
-final class HasRoles extends RelationAnnotation
+#[Attribute(Attribute::TARGET_PROPERTY)]
+final class HasRoles implements MappingAttribute, ConfigAnnotation
 {
     /**
-     * @var string
+     * @param class-string|null $targetEntity
+     * @param string[]|null     $cascade
+     * @psalm-param 'LAZY'|'EAGER'|'EXTRA_LAZY' $fetch
      */
-    public $inversedBy = 'users';
+    public function __construct(
+        public ?string $targetEntity = null,
+        public ?string $mappedBy = null,
+        public ?string $inversedBy = 'users',
+        public ?array $cascade = null,
+        public string $fetch = 'LAZY',
+        public bool $orphanRemoval = false,
+        public ?string $indexBy = null
+    ) {}
 
-    /**
-     * @param Repository $config
-     *
-     * @return mixed
-     */
-    public function getTargetEntity(Repository $config)
+    public function getTargetEntity(Repository $config): ?string
     {
         return $this->targetEntity ?: $config->get('acl.roles.entity', 'Role');
     }

@@ -6,10 +6,5 @@ use Illuminate\Contracts\Config\Repository;
 
 interface ConfigAnnotation
 {
-    /**
-     * @param Repository $config
-     *
-     * @return mixed
-     */
-    public function getTargetEntity(Repository $config);
+    public function getTargetEntity(Repository $config): ?string;
 }

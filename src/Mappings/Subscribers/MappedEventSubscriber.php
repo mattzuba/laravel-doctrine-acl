@@ -14,46 +14,21 @@ use ReflectionProperty;
 
 abstract class MappedEventSubscriber implements EventSubscriber
 {
-    /**
-     * @var Reader|null
-     */
-    protected $reader;
-
-    /**
-     * @var Repository
-     */
-    protected $config;
-
-    /**
-     * @param Reader|null $reader
-     * @param Repository  $config
-     */
-    public function __construct(?Reader $reader, Repository $config)
-    {
-        $this->reader = $reader;
-        $this->config = $config;
-    }
+    public function __construct(protected Reader $reader, protected Repository $config) {}
 
     /**
      * {@inheritdoc}
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::loadClassMetadata,
         ];
     }
 
-    /**
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
         $metadata = $eventArgs->getClassMetadata();
-
-        if (! $this->reader) {
-            return;
-        }
 
         if ($this->isInstantiable($metadata) && $this->shouldBeMapped($metadata)) {
             foreach ($metadata->getReflectionClass()->getProperties() as $property) {
@@ -66,56 +41,26 @@ abstract class MappedEventSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     *
-     * @return bool
-     */
-    abstract protected function shouldBeMapped(ClassMetadata $metadata);
+    abstract protected function shouldBeMapped(ClassMetadata $metadata): bool;
 
-    /**
-     * @return string
-     */
-    abstract public function getAnnotationClass();
+    abstract public function getAnnotationClass(): string;
 
-    /**
-     * @param $property
-     *
-     * @return ConfigAnnotation
-     */
     protected function findMapping(ReflectionProperty $property)
     {
         return $this->reader->getPropertyAnnotation($property, $this->getAnnotationClass());
     }
 
     /**
-     * @param ClassMetadata $metadata
-     *
-     * @return object
+     * @throws \ReflectionException
      */
-    protected function getInstance(ClassMetadata $metadata)
+    protected function getInstance(ClassMetadata $metadata): object
     {
-        $reflection = new ReflectionClass($metadata->getName());
-        $instance   = $reflection->newInstanceWithoutConstructor();
-
-        return $instance;
+        return (new ReflectionClass($metadata->getName()))->newInstanceWithoutConstructor();
     }
 
-    /**
-     * @param ConfigAnnotation $annotation
-     *
-     * @return string
-     */
-    abstract protected function getBuilder(ConfigAnnotation $annotation);
+    abstract protected function getBuilder(ConfigAnnotation $annotation): string;
 
-    /**
-     * A MappedSuperClass or Abstract class cannot be instantiated.
-     *
-     * @param ClassMetadata $metadata
-     *
-     * @return bool
-     */
-    protected function isInstantiable(ClassMetadata $metadata)
+    protected function isInstantiable(ClassMetadata $metadata): bool
     {
         if ($metadata->isMappedSuperclass) {
             return false;

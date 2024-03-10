@@ -6,8 +6,5 @@ use Illuminate\Support\Collection;
 
 interface PermissionDriver
 {
-    /**
-     * @return Collection
-     */
-    public function getAllPermissions();
+    public function getAllPermissions(): Collection;
 }

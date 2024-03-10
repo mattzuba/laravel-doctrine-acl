@@ -3,6 +3,7 @@
 namespace LaravelDoctrine\ACL;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ class AclServiceProvider extends ServiceProvider
     /**
      * Boot the service provider.
      */
-    public function boot()
+    public function boot(Gate $gate, PermissionManager $permissionManager)
     {
         if (!$this->isLumen()) {
             $this->publishes([
@@ -23,12 +24,11 @@ class AclServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        $this->app->make(DoctrineManager::class)->onResolve(function () {
-            $this->definePermissions(
-                app(Gate::class),
-                app(PermissionManager::class)
-            );
-        });
+        $this->definePermissions($gate, $permissionManager);
+
+        if (method_exists(AnnotationRegistry::class, 'registerUniqueLoader')) {
+            AnnotationRegistry::registerUniqueLoader('class_exists');
+        }
     }
 
     /**
@@ -38,14 +38,17 @@ class AclServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfig();
-        if (method_exists(AnnotationRegistry::class, 'registerUniqueLoader')) {
-            AnnotationRegistry::registerUniqueLoader('class_exists');
-        }
 
-        $manager = $this->app->make(DoctrineManager::class);
-        $manager->extendAll(RegisterMappedEventSubscribers::class);
+        $this->app->beforeResolving('registry', function() {
+            static $done = false;
 
-        $this->registerPaths($manager);
+            if (!$done) {
+                $manager = $this->app->make(DoctrineManager::class);
+                $manager->extendAll(RegisterMappedEventSubscribers::class);
+                $this->registerPaths($manager);
+                $done = true;
+            }
+        });
     }
 
     /**

@@ -2,19 +2,15 @@
 
 namespace LaravelDoctrine\ACL\Contracts;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use LaravelDoctrine\ACL\Contracts\Permission as PermissionContract;
 
 interface HasPermissions
 {
-    /**
-     * @param string $permission
-     *
-     * @return bool
-     */
-    public function hasPermissionTo($permission);
+    public function hasPermissionTo(PermissionContract|string|array $permission): bool;
 
     /**
-     * @return ArrayCollection|Permission[]
+     * @return iterable<Permission>
      */
-    public function getPermissions();
+    public function getPermissions(): iterable;
 }

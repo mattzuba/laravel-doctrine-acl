@@ -2,6 +2,7 @@
 
 namespace LaravelDoctrine\ACL;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use LaravelDoctrine\ORM\Configuration\Manager as ConfigurationManager;
 use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
@@ -9,15 +10,10 @@ use LaravelDoctrine\ORM\Exceptions\DriverNotFound;
 abstract class Manager extends ConfigurationManager
 {
     /**
-     * Create a new driver instance.
-     *
-     * @param string $driver
-     * @param array  $settings
-     *
      * @throws DriverNotFound
-     * @return mixed
+     * @throws BindingResolutionException
      */
-    protected function createDriver($driver, array $settings = [], $resolve = true)
+    protected function createDriver($driver, array $settings = [], $resolve = true): mixed
     {
         $class = $this->getNamespace() . '\\' . Str::studly($driver) . $this->getClassSuffix();
 
@@ -26,7 +22,9 @@ abstract class Manager extends ConfigurationManager
         // drivers using their own customized driver creator Closure to create it.
         if (isset($this->customCreators[$driver])) {
             return $this->callCustomCreator($driver);
-        } elseif (class_exists($class)) {
+        }
+
+        if (class_exists($class)) {
             return $this->container->make($class);
         }
 

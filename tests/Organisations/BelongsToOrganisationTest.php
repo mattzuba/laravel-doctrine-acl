@@ -150,11 +150,11 @@ class BelongsToOrganisationTest extends PHPUnit\Framework\TestCase
 
 class UserMock3 implements \LaravelDoctrine\ACL\Contracts\BelongsToOrganisations
 {
-    use \LaravelDoctrine\ACL\Organisations\BelongsToOrganisation;
+    use \LaravelDoctrine\ACL\Concerns\BelongsToOrganisation;
 
     protected $organisations = [];
 
-    public function getOrganisations()
+    public function getOrganisations(): iterable
     {
         return $this->organisations;
     }
@@ -167,11 +167,11 @@ class UserMock3 implements \LaravelDoctrine\ACL\Contracts\BelongsToOrganisations
 
 class UserMock4 implements \LaravelDoctrine\ACL\Contracts\BelongsToOrganisation
 {
-    use \LaravelDoctrine\ACL\Organisations\BelongsToOrganisation;
+    use \LaravelDoctrine\ACL\Concerns\BelongsToOrganisation;
 
     protected $organisation;
 
-    public function getOrganisation()
+    public function getOrganisation(): ?\LaravelDoctrine\ACL\Contracts\Organisation
     {
         return $this->organisation;
     }
@@ -200,7 +200,7 @@ class OrgMock implements \LaravelDoctrine\ACL\Contracts\Organisation
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

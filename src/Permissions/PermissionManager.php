@@ -2,6 +2,7 @@
 
 namespace LaravelDoctrine\ACL\Permissions;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use LaravelDoctrine\ACL\Manager;
@@ -11,10 +12,7 @@ use LaravelDoctrine\ACL\Manager;
  */
 class PermissionManager extends Manager
 {
-    /**
-     * @return array
-     */
-    public function getPermissionsWithDotNotation()
+    public function getPermissionsWithDotNotation(): array
     {
         $permissions = $this->driver()->getAllPermissions();
 
@@ -25,13 +23,7 @@ class PermissionManager extends Manager
         return Arr::flatten($list);
     }
 
-    /**
-     * @param array|string $permissions
-     * @param string       $prepend
-     *
-     * @return array
-     */
-    protected function convertToDotArray($permissions, $prepend = '')
+    protected function convertToDotArray(array|string $permissions, string $prepend = ''): array
     {
         $list = [];
         if (is_array($permissions)) {
@@ -46,34 +38,24 @@ class PermissionManager extends Manager
     }
 
     /**
-     * Get the default driver name.
-     * @return string
+     * @throws BindingResolutionException
      */
-    public function getDefaultDriver()
+    public function getDefaultDriver(): string
     {
         return $this->container->make('config')->get('acl.permissions.driver', 'config');
     }
 
-    /**
-     * @return string
-     */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return __NAMESPACE__;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassSuffix()
+    public function getClassSuffix(): string
     {
         return 'PermissionDriver';
     }
 
-    /**
-     * @return bool
-     */
-    public function useDefaultPermissionEntity()
+    public function useDefaultPermissionEntity(): bool
     {
         if (!$this->needsDoctrine()) {
             return false;
@@ -86,9 +68,9 @@ class PermissionManager extends Manager
     }
 
     /**
-     * @return bool
+     * @throws BindingResolutionException
      */
-    public function needsDoctrine()
+    public function needsDoctrine(): bool
     {
         return $this->getDefaultDriver() === 'doctrine';
     }

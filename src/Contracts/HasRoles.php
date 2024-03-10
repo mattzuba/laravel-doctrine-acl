@@ -2,12 +2,12 @@
 
 namespace LaravelDoctrine\ACL\Contracts;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 interface HasRoles
 {
     /**
-     * @return ArrayCollection|Role[]
+     * @return iterable<Role>
      */
-    public function getRoles();
+    public function getRoles(): iterable;
 }

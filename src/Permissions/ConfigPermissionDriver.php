@@ -7,23 +7,12 @@ use Illuminate\Support\Collection;
 
 class ConfigPermissionDriver implements PermissionDriver
 {
-    /**
-     * @var Repository
-     */
-    protected $repository;
-
-    /**
-     * @param Repository $repository
-     */
-    public function __construct(Repository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(protected Repository $repository) {}
 
     /**
      * @return Collection
      */
-    public function getAllPermissions()
+    public function getAllPermissions(): Collection
     {
         return new Collection(
             $this->repository->get('acl.permissions.list', [])

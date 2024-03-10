@@ -12,30 +12,9 @@ use LaravelDoctrine\ACL\Contracts\Permission;
 
 class DoctrinePermissionDriver implements PermissionDriver
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    public function __construct(protected ManagerRegistry $registry, protected Repository $config) {}
 
-    /**
-     * @var Repository
-     */
-    protected $config;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param Repository      $config
-     */
-    public function __construct(ManagerRegistry $registry, Repository $config)
-    {
-        $this->registry = $registry;
-        $this->config   = $config;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getAllPermissions()
+    public function getAllPermissions(): Collection
     {
         if ($this->getRepository()) {
             try {
@@ -57,37 +36,26 @@ class DoctrinePermissionDriver implements PermissionDriver
      *
      * @return array
      */
-    protected function mapToArrayOfNames($permissions)
+    protected function mapToArrayOfNames($permissions): array
     {
-        $permissions = array_map(function (Permission $permission) {
+        return array_map(static function (Permission $permission) {
             return $permission->getName();
         }, $permissions);
-
-        return $permissions;
     }
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
+    protected function getEntityName(): string
     {
         return $this->config->get('acl.permissions.entity');
     }
 
-    /**
-     * @return EntityManagerInterface|null
-     */
-    protected function getEntityManager()
+    protected function getEntityManager(): ?EntityManagerInterface
     {
         return $this->registry->getManagerForClass(
             $this->getEntityName()
         );
     }
 
-    /**
-     * @return EntityRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): ?EntityRepository
     {
         if ($this->getEntityManager()) {
             $metadata = $this->getEntityManager()->getClassMetadata($this->getEntityName());
@@ -97,5 +65,7 @@ class DoctrinePermissionDriver implements PermissionDriver
                 $metadata
             );
         }
+
+        return null;
     }
 }
